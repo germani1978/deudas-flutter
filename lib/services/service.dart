@@ -1,6 +1,4 @@
 
-import 'package:deudas/models/deuda.dart';
-import 'package:deudas/screens/deudas_screen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Datos {
@@ -14,9 +12,16 @@ class Datos {
   late FlutterSecureStorage storage;
 
   Future<String> cargarDatos() async{
-    storage = FlutterSecureStorage();
-    final str = await storage.read(key: 'deudas') ?? ''; 
-    return str;
+    
+    try {
+       storage = const FlutterSecureStorage();
+       final str = await storage.read(key: 'deudas') ?? ''; 
+       return str;
+    } catch (e) {
+      return '';
+    }
+
+
   }
 
   salvarDatos(String value ) async {

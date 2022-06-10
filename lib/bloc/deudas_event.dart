@@ -10,15 +10,9 @@ class AgregarPersonaDeuda extends DeudasEvent {
   AgregarPersonaDeuda(this.deuda);
 }
 
-class AgregarContact extends DeudasEvent {
-  final int index;
-  final Contact contacto;
-  AgregarContact({required this.index, required this.contacto});
-}
-
 class AgregarDeuda extends DeudasEvent {
   final int index;
-  final int deuda;
+  final double deuda;
   final String nota;
   AgregarDeuda({required this.index, required this.deuda, required this.nota});
 }

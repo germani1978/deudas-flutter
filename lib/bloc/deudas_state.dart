@@ -1,18 +1,19 @@
 part of 'deudas_bloc.dart';
 
 //State raiz
-@immutable
 abstract class DeudasState {
   //propiedades
   final ListaPersonas personDeudas;
   bool isLoading = false;
+  bool isDark = false;
 
   //constructor
   DeudasState(this.personDeudas);
 }
 
 //State Inicial donde no hay deudas
-class DeudasInitial extends DeudasState {
+
+ class DeudasInitial extends DeudasState {
   DeudasInitial() : super(ListaPersonas([])){
     isLoading = true;
   }
@@ -25,5 +26,6 @@ class SetDeuda extends DeudasState {
     Datos().salvarDatos(personDeudas.toJson());    
   }
 }
+
 
 

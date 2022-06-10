@@ -13,13 +13,12 @@ class TituloInicio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Text(titulo,
-            style: TextStyle(
-              color:Color(0xFF6956E4),
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-            )));
+    return Text(titulo,
+        style: TextStyle(
+          color:Color(0xFF6956E4),
+          fontSize: 25,
+          fontWeight: FontWeight.bold,
+        ));
   }
 }
 
@@ -31,22 +30,88 @@ class BtnAddBottom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: ElevatedButton(
-        child: Container(
-          height: 50,
-          width: 100,
-          alignment: Alignment.center,
-          child: const Text('Agregar',style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),)
-        ),
-        style: ElevatedButton.styleFrom(
-          shape: StadiumBorder(),
-          shadowColor: Colors.blue,
-          primary: Color(0xFF6956E4),
-        ),
-        onPressed: func
+    return ElevatedButton(
+      child: Container(
+        height: 45,
+        width: 85,
+        alignment: Alignment.center,
+        child: const Text('Agregar',style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),),
       ),
+      style: ElevatedButton.styleFrom(
+        shape: StadiumBorder(),
+        shadowColor: Colors.indigo,
+        primary: Colors.indigo,
+      ),
+      onPressed: func,
     );
   }
 }
+
+  Text alertDialogTitle( String titulo) {
+    return Text(titulo,style: TextStyle(fontSize: 17,fontWeight: FontWeight.w600,color: Colors.indigo));
+  }
+
+
+  SizedBox espacioVertical() {
+    return SizedBox(height: 10);
+  }
+
+
+ // TextFormField inputDiaolog(TextEditingController _cont, String hint, {bool autoFocus = false,bool checkReal = false, int? maxLines}) {
+
+class InputDialog extends StatefulWidget {
+
+  InputDialog( this._cont, this.hint, this.maxLines, { this.autoFocus = false, this.checkReal = false});
+
+  TextEditingController _cont;
+  String hint;
+  bool autoFocus;
+  bool checkReal;
+  int? maxLines;
+
+  @override
+  State<InputDialog> createState() => _InputDialogState();
+}
+
+class _InputDialogState extends State<InputDialog> {
+   bool isNumReal = true;
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+                      onChanged: widget.checkReal 
+                        ? (value){
+                            double.tryParse(value) == null 
+                              ? { isNumReal = false }
+                              : { isNumReal = true };
+                            setState(() {});
+                          }
+                        : null,
+                      textCapitalization: TextCapitalization.sentences,
+                      controller: widget._cont,
+                      autofocus: widget.autoFocus,
+                      maxLength: widget.maxLines,
+                      decoration: InputDecoration(
+                          errorText: !widget.checkReal
+                                       ? null
+                                       : isNumReal 
+                                             ? null
+                                             : 'Error',
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.indigo)
+                          ),
+                          hintText: widget.hint,
+                          hintStyle: TextStyle(color: Colors.grey)),
+
+                    );
+
+
+  }
+}
+
+
+extension StringCasingExtension on String {
+  String toCapitalized() => length > 0 ?'${this[0].toUpperCase()}${substring(1).toLowerCase()}':'';
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ').split(' ').map((str) => str.toCapitalized()).join(' ');
+}
+
 
