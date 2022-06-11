@@ -8,51 +8,83 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
+const largo = 0.09;
 
 class DeudaScreen extends StatelessWidget {
+
   const DeudaScreen({Key? key, this.index=0 }) : super(key: key);
   final int index;
 
   @override
   Widget build(BuildContext context) {
 
+    final pro = Provider.of<ChangeToDark>(context); 
+    final maxWidth = MediaQuery.of(context).size.width;
+    final maxHeight = MediaQuery.of(context).size.height;
 
-    return SafeArea(
+
+    return Material(
       child: Scaffold(
-        appBar: appBar(),
-        body: containerDeudas(),
+         body: SafeArea(
+           child: SizedBox(
+              height: double.infinity,
+              width: double.infinity,
+              child: Column(
+                children: [
+                  Container(
+                    width: maxWidth,
+                    color: !pro.dark ? Theme.of(context).primaryColor :  Color(0xFF02293C),
+                     height: maxHeight *largo,
+                    child: Center(
+                      child: Row(
+                        children: [
+                          SizedBox(width: 10,),
+                          IconButton(onPressed: (() { Navigator.pop(context);}), icon: Icon(Icons.arrow_back, color: Colors.white)),
+                           BlocBuilder<DeudasBloc, DeudasState>(
+                              builder: (context, state) {
+                                final name = state.personDeudas.lista[index].nombre;
+                                return Text(name, style:TextStyle(color:Colors.amber[300], fontSize: 22,fontWeight: FontWeight.w800, letterSpacing: 1.3));  
+                              },
+                          ),
+                          Expanded(child: Container()),
+                          BlocBuilder<DeudasBloc, DeudasState>(
+                            builder: (context, state) {
+                            final total = state.personDeudas.lista[index].total();
+                            return Text('\$ $total ', 
+                                        style:TextStyle(
+                                          color: Colors.white, 
+                                          fontSize: 20,
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.w800
+                                        ));
+                            },
+                          ), 
+                          SizedBox(width: 20,),
+         
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox(
+                      child: Container(
+                        child:containerDeudas(),
+                        decoration: BoxDecoration(
+                          color :!pro.dark ?  Color(0xFFF0F0F0) : Colors.black,
+                          borderRadius: BorderRadius.only( topLeft: Radius.circular(15), topRight: Radius.circular(15))  
+                        ),
+                        width:maxWidth,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: _BtnAgregarDeuda( index: index ),
       ),
     );
-  }
-
-  AppBar appBar() {
-    return AppBar(
-        backgroundColor: Colors.indigo,
-        elevation: 5,
-        leadingWidth: 40,
-        title: BlocBuilder<DeudasBloc, DeudasState>(
-           builder: (context, state) {
-            final name = state.personDeudas.lista[index].nombre;
-            return Text(name, style:TextStyle(color:Colors.white, fontSize: 22,fontWeight: FontWeight.w500));  
-          },
-       ),
-       actions: [
-         Align(
-           alignment: Alignment.center,
-           child: BlocBuilder<DeudasBloc, DeudasState>(
-             builder: (context, state) {
-             final total = state.personDeudas.lista[index].total();
-             return Padding(
-               padding: const EdgeInsets.only( right: 20),
-               child: Text('\$$total ', style:TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.w400)),
-             );
-           },
-                  ),
-         ),
-       ],
-      );
   }
 
   Container containerDeudas() {
@@ -79,7 +111,7 @@ class DeudaScreen extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation:!prov.dark ? 10 : 0,
       margin: EdgeInsets.symmetric(horizontal: 12,vertical: 3),
-      color: !prov.dark ? Colors.white : Colors.white12,
+      color: !prov.dark ? Colors.white : Colors.white30,
       child: GestureDetector(
           onLongPress: () {
             BlocProvider.of<DeudasBloc>(context).add(EliminaDeuda(indexPersona: index, indexDeuda: i));
@@ -88,14 +120,14 @@ class DeudaScreen extends StatelessWidget {
 
             padding: EdgeInsets.symmetric(vertical: 10),
             child: ListTile(
-              title: Text('\$ ${persona.deudas[i].valor}', style: TextStyle(fontSize: 17,fontWeight: FontWeight.w800, color: Colors.blue)),
-              // title: Text(persona.deudas[i].valor.toString(), style: TextStyle(fontSize: 17,fontWeight: FontWeight.w600,color: Colors.black)),
+              title: Text('\$ ${persona.deudas[i].valor}', 
+                style: TextStyle( letterSpacing: 0.5, fontSize: 19,fontWeight: FontWeight.w900, color: Colors.black)),
               trailing : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(persona.deudas[i].fecha,style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500,color: Colors.blueGrey)),
-                  Text(persona.deudas[i].nota,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: Colors.blue)),        
+                  Text(persona.deudas[i].nota,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color:!prov.dark ?  Colors.purple[700]: Colors.red )),        
                 ],
               ),
             ),

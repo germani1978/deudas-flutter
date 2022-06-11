@@ -74,6 +74,12 @@ class ListaPersonas {
 
   Map<String, dynamic> toMap() => {'lista': List<dynamic>.from( lista.map((persona) => persona.toMap())),};
   String toJson() => json.encode(toMap());
+
+  String total() {
+    double sum = 0;
+    for(var element in lista) {sum+= double.parse(element.total());}
+    return sum.toString();
+  }
   
 }
 

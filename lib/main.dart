@@ -17,23 +17,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  
-  final textTheme1 = Theme.of(context).textTheme;
-
     final pro = Provider.of<ChangeToDark>(context);
-
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: ((context) => DeudasBloc()))
       ],
       child: MaterialApp(
-        theme: !pro.dark ? ThemeData.light().copyWith(
-          scaffoldBackgroundColor: Color.fromARGB(255, 221, 216, 255)
-        ) : ThemeData.dark().copyWith(
+        theme: ThemeData(
+          fontFamily: 'Roboto',
+          brightness:   !pro.dark ? Brightness.light : Brightness.dark,
+          scaffoldBackgroundColor:  !pro.dark ? Theme.of(context).primaryColor : Color(0xFF02293C) ,
         ),
-        // theme: ThemeData(
-        //   fontFamily: 'Roboto',
-        // ),
         debugShowCheckedModeBanner: false,
         initialRoute: 'panelDeuda',
         routes: {

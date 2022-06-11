@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:deudas/main.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TituloInicio extends StatelessWidget {
 
@@ -23,13 +25,17 @@ class TituloInicio extends StatelessWidget {
 }
 
 class BtnAddBottom extends StatelessWidget {
+
+
    final void Function() ? func;
-  const BtnAddBottom({
+   BtnAddBottom({
     Key? key, this.func,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final pro = Provider.of<ChangeToDark>(context);
+    
     return ElevatedButton(
       child: Container(
         height: 45,
@@ -38,9 +44,10 @@ class BtnAddBottom extends StatelessWidget {
         child: const Text('Agregar',style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),),
       ),
       style: ElevatedButton.styleFrom(
+        primary:  !pro.dark ? Theme.of(context).primaryColor :  Color(0xFF02293C),
         shape: StadiumBorder(),
-        shadowColor: Colors.indigo,
-        primary: Colors.indigo,
+        //shadowColor: Colors.indigo,
+        
       ),
       onPressed: func,
     );

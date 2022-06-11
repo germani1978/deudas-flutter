@@ -15,42 +15,82 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+const largo = 0.09;
 
-class ListaDeudaScreen extends StatelessWidget  {
+class ListaDeudaScreen extends StatelessWidget {
   const ListaDeudaScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final pro = Provider.of<ChangeToDark>(context);
+    final maxWidth = MediaQuery.of(context).size.width;
+    final maxHeight = MediaQuery.of(context).size.height;
 
-    return SafeArea(
-      child: Material(
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.indigo,
-            elevation: 0,
-            title: ListTile(
-              leading: Text('Deudas',
-                  style: TextStyle(
-                      fontSize: 22,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w400)),
+    return Material(
+      child: Scaffold(
+        body: SafeArea(
+          child: SizedBox(
+            height: double.infinity,
+            width: double.infinity,
+            // color: Colors.red,
+            child: Column(
+              children: [
+                Container(
+                  width: maxWidth,
+                  color: !pro.dark ? Theme.of(context).primaryColor :  Color(0xFF02293C),
+                  height: maxHeight *largo,
+                  child: Center(
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 30,
+                        ),
+                        Text('Deudas',
+                            style: TextStyle(
+                                fontSize: 22,
+                                color: Colors.amber[300],
+                                fontWeight: FontWeight.w800,
+                        )),
+                        Expanded(child: Container()),
+                        BlocBuilder<DeudasBloc, DeudasState>(
+                          builder: (context, state) {
+                            return Text('\$ ${state.personDeudas.total()} ',
+                                style: TextStyle(
+                                    letterSpacing: 0.2,
+                                    color: Colors.white,
+                                    fontSize: 23,
+                                    fontWeight: FontWeight.w900));
+                          },
+                        ),
+                        MenuLateral(pro: pro),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    child: Container(
+                      child: ListaDeudasWidget(),
+                      decoration: BoxDecoration(
+                          color: !pro.dark ? Color(0xFFF0F0F0) : Colors.black,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15),
+                              topRight: Radius.circular(15))),
+                      width: maxWidth,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            actions: [
-              MenuLateral(pro: pro),
-            ],
           ),
-          body: ListaDeudasWidget(),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: _BtnFinal(),
         ),
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: _BtnFinal(),
       ),
     );
   }
 }
-
-
 
 class ListaDeudasWidget extends StatefulWidget {
   @override
@@ -89,32 +129,31 @@ class ListViewDeudores extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final prov = Provider.of<ChangeToDark>(context); 
-
+    final prov = Provider.of<ChangeToDark>(context);
 
     return ListView.builder(
       itemCount: persons.lista.length,
-      itemBuilder: ((context, index) => GestureDetector(
-            onTap: (() {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => DeudaScreen(index: index)));
-            }),
-            onLongPress: () {
-              BlocProvider.of<DeudasBloc>(context)
-                  .add(EliminarPersonaDeuda(index));
-            },
-            child: Card(
-                   
-                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                   elevation:!prov.dark ? 10 : 0,
-                   margin: EdgeInsets.symmetric(horizontal: 12,vertical: 3),
-                   color: !prov.dark ? Colors.white : Colors.white12,
+      itemBuilder: ((context, index) => Card(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            elevation: !prov.dark ? 10 : 0,
+            margin: EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+            color: !prov.dark ? Colors.white : Colors.white30,
+            child: GestureDetector(
+              onTap: (() {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DeudaScreen(index: index)));
+              }),
+              onLongPress: () {
+                BlocProvider.of<DeudasBloc>(context)
+                    .add(EliminarPersonaDeuda(index));
+              },
               child: ListTile(
                 leading: CircleAvatar(
-                    backgroundColor: Colors.blueGrey[300],
+                    radius: 15,
+                    backgroundColor: Colors.blueGrey[400],
                     child: Icon(
                       Icons.person,
                       color: Colors.white,
@@ -122,17 +161,17 @@ class ListViewDeudores extends StatelessWidget {
                 title: Text(
                   persons.lista[index].nombre,
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight:FontWeight.w900,
-                    color: Colors.blue
-                  ),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black),
                 ),
                 trailing: Text(
                   '\$ ${persons.lista[index].total()}',
                   style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.black
+                    letterSpacing: 0.5,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.blue,
                   ),
                 ),
                 subtitle: Text(
@@ -140,7 +179,7 @@ class ListViewDeudores extends StatelessWidget {
                       ? 'sin fecha'
                       : persons.lista[index].deudas[0].fecha,
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: Colors.blueGrey,
                   ),
@@ -267,7 +306,6 @@ class _FormOneState extends State<FormOne> {
                     helperText: 'Algo para recordar(opcional)',
                     labelText: 'Nota'),
                 onChanged: (value) {},
-                validator: (source) {},
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -306,6 +344,7 @@ class MenuLateral extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
+        icon: Icon(Icons.more_vert, color: Colors.white),
         itemBuilder: (context) => [
               PopupMenuItem(
                 child: Text('Compartir copia de Seguridad'),
@@ -327,7 +366,8 @@ class MenuLateral extends StatelessWidget {
               final String copiaSeguridad = await Datos().cargarDatos();
 
               //prepara el fichero copia.txt con los datos
-              final path = (await getApplicationDocumentsDirectory()).path + '/copia.txt';
+              final path = (await getApplicationDocumentsDirectory()).path +
+                  '/copia.txt';
               File fileIn = File(path);
               await fileIn.writeAsString(copiaSeguridad);
 
@@ -340,16 +380,16 @@ class MenuLateral extends StatelessWidget {
               //buscar el archivo con los datos en el telefono
               final result = await FilePicker.platform.pickFiles();
 
-              if ( result == null ) return;
+              if (result == null) return;
 
               //tomar el primer elemento
               final Platfile = result.files.first;
 
               //lo guarda en un File
-              final File fileOut = File(Platfile.path!); 
+              final File fileOut = File(Platfile.path!);
 
               //extra el str
-              String str = await (fileOut).readAsString() ;
+              String str = await (fileOut).readAsString();
 
               //salvar datos en SecureStotage
               Datos().salvarDatos(str);
